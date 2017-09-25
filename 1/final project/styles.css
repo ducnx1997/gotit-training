@@ -1,0 +1,32 @@
+h1 {
+  color: #02b3e4;
+}
+
+h2 {
+  color: #2d3c49;
+}
+
+h4 {
+  color: #7d97ad;
+}
+
+.main-img {
+  width: 100%;
+  height: auto;
+}
+
+.project-list {
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .profile-info {
+    text-align: right;
+  }
+}
+
+@media (max-width: 767px) {
+  header {
+    text-align: center;
+  }
+}
