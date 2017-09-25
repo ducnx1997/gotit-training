@@ -3,26 +3,26 @@ import webapp2
 import jinja2
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))
+jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape=True)
 
-form_html = """
+# form_html = """
   
-"""
+# """
 
-hidden_html = """
-  <input type="hidden" name="food" value="%s">
-"""
+# hidden_html = """
+#   <input type="hidden" name="food" value="%s">
+# """
 
-item_html = "<li>%s</li>"
+# item_html = "<li>%s</li>"
 
-shopping_list_html = """
-  <br>
-  <br>
-  <h2>Shopping list</h2>
-  <ul>
-  %s
-  </ul>
-"""
+# shopping_list_html = """
+#   <br>
+#   <br>
+#   <h2>Shopping list</h2>
+#   <ul>
+#   %s
+#   </ul>
+# """
 
 class Handler(webapp2.RequestHandler):
   def write(self, *a, **kw):
@@ -37,10 +37,8 @@ class Handler(webapp2.RequestHandler):
 
 class MainPage(Handler):
   def get(self):
-    n = self.request.get("n")
-    if n: 
-      n = int(n)
-    self.render("shopping_list.html", n=n)
+    items = self.request.get_all("food")
+    self.render("shopping_list.html", items = items)
 
     # output = form_html
     # output_hidden = ""
