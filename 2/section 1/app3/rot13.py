@@ -42,4 +42,4 @@ class Rot13Handler(Handler):
 app = webapp2.WSGIApplication([
   ('/', MainPage),
   ('/rot13', Rot13Handler)
-])
+], debug=True)
