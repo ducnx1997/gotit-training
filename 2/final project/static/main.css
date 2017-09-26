@@ -96,10 +96,31 @@ input[type=submit] {
     right: 0px;
     bottom: 0px;
     color: #999;
+}
 
+.post-delete a {
+    text-decoration: none;
+}
+
+.post-edit {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    color: #999;
+}
+
+.post-edit a {
+    text-decoration: none;
 }
 
 .post-content {
     margin-top: 5px;
 }
 
+.post-owner {
+    color: #999;
+}
+
+.newpost-btn {
+    text-decoration: none;
+}
