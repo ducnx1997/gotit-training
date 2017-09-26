@@ -132,7 +132,12 @@ class Post(db.Model):
 	def render(self, user = None):
 		self._render_text = self.content.replace('\n', '<br>')
 		liked_status = "Like"
-		print self.liked_num
+		if user and self.liked_num:
+			liked_user = self.liked_user.split(';')
+			if liked_user and user.name in liked_user:
+				liked_status = "Liked"
+
+		# print self.liked_num
 		return render_str("post.html", p = self, liked_status = liked_status)
 
 
@@ -145,7 +150,7 @@ class LikeHandler(BlogHandler):
 		if post_id:
 			key = db.Key.from_path('Post', int(post_id), parent=blog_key())
 			post = db.get(key)
-			print post.liked_num
+			# print post.liked_num
 
 			if not post.liked_num:
 				post.liked_num = 0
@@ -180,7 +185,7 @@ class PostPage(LikeHandler):
 			self.error(404)
 			return
 
-		self.render("permalink.html", post = post)
+		self.render("permalink.html", post = post, user = self.user)
 
 class NewPost(BlogHandler):
 	def get(self):
@@ -240,7 +245,7 @@ class EditPost(BlogHandler):
 			post.subject = subject
 			post.content = content
 			post.put()
-			print post.last_modified
+			# print post.last_modified
 			self.redirect('/blog/%s' % str(post.key().id()))
 		else:
 			error = "subject and content, please!"
