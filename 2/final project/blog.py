@@ -126,17 +126,52 @@ class Post(db.Model):
 	owner = db.StringProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
 	last_modified = db.DateTimeProperty(auto_now = True)
+	liked_user = db.TextProperty(required = False)
+	liked_num = db.IntegerProperty(required = False)
 
-	def render(self):
+	def render(self, user = None):
 		self._render_text = self.content.replace('\n', '<br>')
-		return render_str("post.html", p = self)
+		liked_status = "Like"
+		print self.liked_num
+		return render_str("post.html", p = self, liked_status = liked_status)
 
-class BlogFront(BlogHandler):
+
+class LikeHandler(BlogHandler):
+	def post(self, post_id = None):
+		if not self.user:
+			self.redirect("/login")
+		
+		post_id = self.request.get('like-post')
+		if post_id:
+			key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+			post = db.get(key)
+			print post.liked_num
+
+			if not post.liked_num:
+				post.liked_num = 0
+				post.liked_user = ''
+
+			if post.owner != self.user.name:
+				liked_user = post.liked_user.split(';')
+				if not self.user.name in liked_user:
+					post.liked_num += 1
+					post.liked_user += self.user.name + ';'
+				else:
+					post.liked_num -= 1
+					post.liked_user = post.liked_user.replace(self.user.name + ';', '')
+
+			post.put()
+		
+		self.redirect(self.request.url)
+		
+		
+
+class BlogFront(LikeHandler):
 	def get(self):
 		posts = Post.all().order('-created')
-		self.render('front.html', posts = posts)
+		self.render('front.html', posts = posts, user = self.user)
 
-class PostPage(BlogHandler):
+class PostPage(LikeHandler):
 	def get(self, post_id):
 		key = db.Key.from_path('Post', int(post_id), parent=blog_key())
 		post = db.get(key)

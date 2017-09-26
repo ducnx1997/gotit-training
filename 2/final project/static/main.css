@@ -86,6 +86,10 @@ input[type=submit] {
     border-bottom: 3px solid #666;
 }
 
+.post-heading a {
+    text-decoration: none;
+}
+
 .post-title {
     font-size: 24px;
     font-weight: bold;

@@ -1,7 +1,7 @@
 <div class="post">
   <div class="post-heading">
     <div class="post-title">
-      {{p.subject}}
+      <a href="/blog/{{p.key().id()}}">{{p.subject}}</a>
     </div>
 
     <div class="post-date">
@@ -20,5 +20,20 @@
 
   <div class="post-content">
     {{p._render_text | safe}}
+  </div>
+  <hr>
+    <form method="post">
+      <input type="hidden" value="{{p.key().id()}}" name="like-post">
+      <button type="submit">{{liked_status}}</button>
+    </form>
+  <hr>
+  <div class="post-like">
+    <div>
+      {% if p.liked_num %}
+        {{p.liked_num}} people liked this
+      {% else %}
+        0 people liked this
+      {% endif %}
+    </div>
   </div>
 </div>
