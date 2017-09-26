@@ -15,7 +15,12 @@
       </label>
 
       <div class="error">{{error}}</div>
-
+      <input type="hidden" name="delete-request" value="0">
       <input type="submit">
+    </form>
+    <br>
+    <form method="post">
+      <input type="hidden" name="delete-request" value="1">
+      <button type="submit">Delete</button> 
     </form>
 {% endblock %}

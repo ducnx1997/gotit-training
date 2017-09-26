@@ -234,9 +234,18 @@ class EditPost(BlogHandler):
 		key = db.Key.from_path('Post', int(post_id), parent=blog_key())
 		post = db.get(key)
 
+		if not post:
+			self.error(404)
+			return
+
 		if self.user.name != post.owner:
 			self.response.write('It\'s not your post!!!')
 			return 
+
+		if self.request.get('delete-request') == "1":
+			post.delete()
+			self.redirect('/blog')
+			return
 
 		subject = self.request.get('subject')
 		content = self.request.get('content')
