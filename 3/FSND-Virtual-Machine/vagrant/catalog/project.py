@@ -194,30 +194,44 @@ def gdisconnect():
 @app.route('/')
 @app.route('/catalog/')
 def MainPage():
-    return render_template('menu.html')
+    categories = session.query(Category).all()
+    return render_template('main.html', categories = categories)
     return 'MainPage'
 
 @app.route('/catalog/<int:category_id>/')
 def viewCategory(category_id):
+    items = session.query(Item).filter_by(category_id = category_id).all()
+    print items
+    category = session.query(Category).filter_by(id = category_id).first()
+    return render_template('category.html', items = items, category = category)
     return 'this is %s' % category_id
 
-@app.route('/catalog/<int:category_id>/<int:item_id>/')
-def viewItem(category_id, item_id):
-    return 'view item %s in %s' % (item_id, category_id)
+# @app.route('/catalog/<int:category_id>/<int:item_id>/')
+# def viewItem(category_id, item_id):
+#     return 'view item %s in %s' % (item_id, category_id)
 
 @app.route('/catalog/new/', methods = ['GET', 'POST'])
 def createItem():
-    return 'creating new item'
+    if 'username' not in login_session:
+        return redirect('/login')
+
+    print login_session['username']
+
     if request.method == 'POST':
-        category = session.query(Category).filter_by(name = request.form['category']).one()
+        category = session.query(Category).filter_by(name = request.form['category']).first()
         if category:
             newItem = Item(
-                        name=request.form['name'],
+                        name = request.form['name'],
                         description = request.form['description'],
                         category_id = category.id,
                         user_id = 1
                     )
-
+            session.add(newItem)
+            session.commit()
+            flash('New item created!')
+            return redirect(url_for('MainPage'))
+    else:
+        return render_template('newitem.html')
     
 
 @app.route('/catalog/<int:category_id>/<int:item_id>/edit')
@@ -225,7 +239,7 @@ def editItem(category_id, item_id):
     return 'edit item %s in %s' % (item_id, category_id)
 
 @app.route('/catalog/<int:category_id>/<int:item_id>/delete')
-def deteleItem(category_id, item_id):
+def deleteItem(category_id, item_id):
     return 'delete item %s in %s' % (item_id, category_id)
 
 if __name__ == '__main__':

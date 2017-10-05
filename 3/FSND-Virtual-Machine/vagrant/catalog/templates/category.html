@@ -1,0 +1,48 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<div class="row divider green">
+    <div class="col-md-12"></div>
+</div>
+<div class="row">
+    <div class="col-md-11 col-md-offset-1">
+        <h1>{{ category.name }}
+        <figure class="creator">
+            <img src="#">
+            <figcaption></figcaption>
+        </figure>
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-11 padding-none">
+        <a href="{{url_for('createItem', category_id = category.id )}}">
+            <button class="btn btn-default">
+                <span class="glyphicon" aria-hidden="true"></span>Add Item
+            </button>
+        </a>
+    </div>
+    <div class="col-md-7"></div>
+</div>
+
+{% if items != [] %}
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-3">
+        {% for item in items %}
+            <div>
+                <h3>{{item.name}}</h3>
+                <p>{{item.description}}</p>
+                <a href='{{url_for('editItem', category_id = category.id, item_id = item.id ) }}'>Edit</a> | 
+                <a href='{{url_for('deleteItem', category_id = category.id, item_id = item.id ) }}'>Delete</a>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="col-md-1"></div>
+</div>
+{% endif %}
+
+{% endblock %}
