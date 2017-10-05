@@ -196,7 +196,6 @@ def gdisconnect():
 def MainPage():
     categories = session.query(Category).all()
     return render_template('main.html', categories = categories)
-    return 'MainPage'
 
 @app.route('/catalog/<int:category_id>/')
 def viewCategory(category_id):
@@ -204,7 +203,6 @@ def viewCategory(category_id):
     print items
     category = session.query(Category).filter_by(id = category_id).first()
     return render_template('category.html', items = items, category = category)
-    return 'this is %s' % category_id
 
 # @app.route('/catalog/<int:category_id>/<int:item_id>/')
 # def viewItem(category_id, item_id):
@@ -214,8 +212,6 @@ def viewCategory(category_id):
 def createItem():
     if 'username' not in login_session:
         return redirect('/login')
-
-    print login_session['username']
 
     if request.method == 'POST':
         category = session.query(Category).filter_by(name = request.form['category']).first()
@@ -238,9 +234,22 @@ def createItem():
 def editItem(category_id, item_id):
     return 'edit item %s in %s' % (item_id, category_id)
 
-@app.route('/catalog/<int:category_id>/<int:item_id>/delete')
+@app.route('/catalog/<int:category_id>/<int:item_id>/delete', methods = ['GET', 'POST'])
 def deleteItem(category_id, item_id):
-    return 'delete item %s in %s' % (item_id, category_id)
+    if 'username' not in login_session:
+        return redirect('/login')
+    item = session.query(Item).filter_by(id = item_id).first()
+    if item:
+        if login_session['user_id'] != item.user_id:
+            return redirect('/catalog/%s/' % category_id)
+        if request.method == 'POST':
+            session.delete(item)
+            session.commit()
+            return redirect('/catalog/%s/' % category_id)
+        else:
+            return render_template('deleteitem.html', item = item)
+    else: 
+        return redirect('/')
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
