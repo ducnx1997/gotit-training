@@ -5,6 +5,11 @@
             </a>
         </div>
         <div class="col-md-6 text-right">
-            <a href="{{url_for('showLogin')}}">Login</a>
+            {% if login_session['username'] %}
+                <h3>{{login_session['username']}}</h3>
+                <a href="{{url_for('gdisconnect')}}">Logout</a>
+            {% else %}
+                <a href="{{url_for('showLogin')}}">Login</a>
+            {% endif %}
         </div>
     </div>

@@ -1,6 +1,8 @@
-{% extends "main.html" %}
+{% extends "base.html" %}
 {% block content %}
+{% with login_session = login_session %}
 {% include "header.html" %}
+{% endwith %}
 
 <div class="row divider green">
     <div class="col-md-12"></div>

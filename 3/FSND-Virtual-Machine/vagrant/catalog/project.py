@@ -195,14 +195,15 @@ def gdisconnect():
 @app.route('/catalog/')
 def MainPage():
     categories = session.query(Category).all()
-    return render_template('main.html', categories = categories)
+    # print login_session['user_name']
+    return render_template('main.html', categories = categories, login_session = login_session)
 
 @app.route('/catalog/<int:category_id>/')
 def viewCategory(category_id):
     items = session.query(Item).filter_by(category_id = category_id).all()
     print items
     category = session.query(Category).filter_by(id = category_id).first()
-    return render_template('category.html', items = items, category = category)
+    return render_template('category.html', items = items, category = category, login_session = login_session)
 
 # @app.route('/catalog/<int:category_id>/<int:item_id>/')
 # def viewItem(category_id, item_id):
@@ -227,7 +228,7 @@ def createItem():
             flash('New item created!')
             return redirect(url_for('MainPage'))
     else:
-        return render_template('newitem.html')
+        return render_template('newitem.html', login_session = login_session)
     
 
 @app.route('/catalog/<int:category_id>/<int:item_id>/edit', methods = ['GET', 'POST'])
@@ -252,7 +253,7 @@ def editItem(category_id, item_id):
             flash('Menu Item Successfully Edited')
             return redirect(url_for('viewCategory', category_id = category_id))
         else:
-            return render_template('edititem.html', item = item)
+            return render_template('edititem.html', item = item, login_session = login_session)
             
     else: 
         return redirect('/')
@@ -271,7 +272,7 @@ def deleteItem(category_id, item_id):
             session.commit()
             return redirect(url_for('viewCategory', category_id = category_id))
         else:
-            return render_template('deleteitem.html', item = item)
+            return render_template('deleteitem.html', item = item, login_session = login_session)
     else: 
         return redirect('/')
 
