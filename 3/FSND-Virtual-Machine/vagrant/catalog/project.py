@@ -230,8 +230,32 @@ def createItem():
         return render_template('newitem.html')
     
 
-@app.route('/catalog/<int:category_id>/<int:item_id>/edit')
+@app.route('/catalog/<int:category_id>/<int:item_id>/edit', methods = ['GET', 'POST'])
 def editItem(category_id, item_id):
+    if 'username' not in login_session:
+        return redirect('/login')
+    item = session.query(Item).filter_by(id = item_id).first()
+    if item:
+        if login_session['user_id'] != item.user_id:
+            return redirect('/catalog/%s/' % category_id)
+        if request.method == 'POST':
+            if request.form['name']:
+                item.name = request.form['name']
+            if request.form['description']:
+                item.description = request.form['description']
+            if request.form['category']:
+                newCategory = session.query(Category).filter_by(name = request.form['category']).first()
+                if newCategory:
+                    item.category_id = newCategory.id
+            session.add(item)
+            session.commit()
+            flash('Menu Item Successfully Edited')
+            return redirect(url_for('viewCategory', category_id = category_id))
+        else:
+            return render_template('edititem.html', item = item)
+            
+    else: 
+        return redirect('/')
     return 'edit item %s in %s' % (item_id, category_id)
 
 @app.route('/catalog/<int:category_id>/<int:item_id>/delete', methods = ['GET', 'POST'])
@@ -245,7 +269,7 @@ def deleteItem(category_id, item_id):
         if request.method == 'POST':
             session.delete(item)
             session.commit()
-            return redirect('/catalog/%s/' % category_id)
+            return redirect(url_for('viewCategory', category_id = category_id))
         else:
             return render_template('deleteitem.html', item = item)
     else: 
