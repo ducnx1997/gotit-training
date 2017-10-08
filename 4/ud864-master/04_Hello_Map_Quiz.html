@@ -1,0 +1,67 @@
+<!-- This is the corresponding "starter code" for 04_Hello Map in Udacity and Google's Maps
+API Course, Lesson 1 -->
+<html>
+ <head>
+ <!-- styles put here, but you can include a CSS file and reference it instead! -->
+   <style type="text/css">
+     html, body { height: 100%; margin: 0; padding: 0; }
+     #map { height: 100%; }
+   </style>
+ </head>
+ <body>
+   <!-- TODO 1: Create a place to put the map in the HTML-->
+   <div id="map"></div>
+   <script>
+    // TODO: Create a map variable
+    var map;
+    // TODO: Complete the following function to initialize the map
+    var markers = [];
+    function initMap() {
+        // TODO: use a constructor to create a new map JS object. You can use the coordinates
+        // we used, 40.7413549, -73.99802439999996 or your own!
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 40.7413549, lng: -73.9980244},
+            zoom: 13
+        });
+        var locations = [
+            {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
+            {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}}
+        ];
+
+        var largeInfowindow = new google.maps.InfoWindow();
+
+        for (let i = 0; i < locations.length; i++) {
+            var position = locations[i].location;
+            var title = locations[i].title;
+            var marker = new google.maps.Marker({
+                map: map,
+                position: position,
+                title: title,
+                animation: google.maps.Animation.DROP,
+                id: i
+            });
+            markers.push(marker);
+            marker.addListener('click', () => {
+                populateInfoWindow(this, largeInfowindow);
+            });
+        };
+
+        function populateInfoWindow(marker, infowindow) {
+            if (infowindow.marker != marker) {
+                infowindow.marker = marker;
+                infowindow.setContent('<div>' + marker.title + '</div>');
+                infowindow.open(map, marker);
+
+                infowindow.addListener('closeclick', function() {
+                    infowindow.setMarker(null);
+                });
+            }
+        }        
+    }
+
+   </script>
+   <!--TODO: Load the JS API ASYNCHRONOUSLY below.-->
+   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJnI0UBCOyPDAq9AWWMouEfdkUPyGA8I0&callback=initMap" 
+   async defer></script>
+ </body>
+</html>
